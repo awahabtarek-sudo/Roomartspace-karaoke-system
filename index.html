@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StageMaster Karaoke Queue</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Righteous&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            display: ['Righteous', 'cursive'],
+          },
+          colors: {
+            brand: {
+              pink: '#ff007f',
+              purple: '#8a2be2',
+              cyan: '#00f3ff',
+              dark: '#080811',
+              card: '#121225',
+            }
+          },
+          boxShadow: {
+            'neon-pink': '0 0 20px rgba(255, 0, 127, 0.4), 0 0 35px rgba(255, 0, 127, 0.2)',
+            'neon-cyan': '0 0 20px rgba(0, 243, 255, 0.4), 0 0 35px rgba(0, 243, 255, 0.2)',
+            'neon-purple': '0 0 20px rgba(138, 43, 226, 0.4)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glow-text-pink {
+      text-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(255, 0, 127, 0.3);
+    }
+    .glow-text-cyan {
+      text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.3);
+    }
+    .glow-border-pink {
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+    }
+    .glow-border-cyan {
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080811;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #232338;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3c3c5e;
+    }
+    .gradient-border {
+      position: relative;
+      background: #121225;
+      background-clip: padding-box;
+      border: 1px solid transparent;
+      border-radius: 1.25rem;
+    }
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      top: -1px; right: -1px; bottom: -1px; left: -1px;
+      z-index: -1;
+      margin: -1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg, #ff007f, #8a2be2, #00f3ff);
+      opacity: 0.4;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-qr-area, #printable-qr-area * {
+        visibility: visible;
+      }
+      #printable-qr-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col bg-[#080811] text-slate-100 font-sans antialiased selection:bg-brand-pink selection:text-white">
+
+  <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2.5 bg-gradient-to-tr from-brand-pink to-brand-purple rounded-xl shadow-neon-pink flex items-center justify-center">
+          <i data-lucide="mic" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-display text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-pink via-purple-400 to-brand-cyan tracking-wider">
+            STAGE MASTER
+          </h1>
+          <p class="text-[11px] text-slate-400 font-medium">Karaoke Event Host Manager</p>
+        </div>
+      </div>
+
+      <!-- Mode Toggle Switcher -->
+      <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800"
