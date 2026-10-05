@@ -1,126 +1,376 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StageMaster Karaoke Queue</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- QRCode.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Righteous&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Outfit', 'sans-serif'],
-            display: ['Righteous', 'cursive'],
-          },
-          colors: {
-            brand: {
-              pink: '#ff007f',
-              purple: '#8a2be2',
-              cyan: '#00f3ff',
-              dark: '#080811',
-              card: '#121225',
-            }
-          },
-          boxShadow: {
-            'neon-pink': '0 0 20px rgba(255, 0, 127, 0.4), 0 0 35px rgba(255, 0, 127, 0.2)',
-            'neon-cyan': '0 0 20px rgba(0, 243, 255, 0.4), 0 0 35px rgba(0, 243, 255, 0.2)',
-            'neon-purple': '0 0 20px rgba(138, 43, 226, 0.4)',
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    .glow-text-pink {
-      text-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(255, 0, 127, 0.3);
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #161f30;
+      --border: #233148;
+      --primary: #ec4899;
+      --secondary: #8b5cf6;
+      --accent: #06b6d4;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --warning: #f59e0b;
     }
-    .glow-text-cyan {
-      text-shadow: 0 0 10px rgba(0, 243, 255, 0.7), 0 0 20px rgba(0, 243, 255, 0.3);
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; min-height: 100vh; }
+
+    header {
+      background: linear-gradient(135deg, rgba(236,72,153,0.15) 0%, rgba(139,92,246,0.15) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
     }
-    .glow-border-pink {
-      box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+
+    .nav-container { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.25rem; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .btn {
+      background: #233148;
+      color: white;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
     }
-    .glow-border-cyan {
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    .btn:hover { background: #2d3f5d; }
+    .btn-primary { background: var(--primary); border: none; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--secondary); border: none; }
+    .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.85rem; }
+    .btn-success { background: var(--success); border: none; }
+    .btn-danger { background: #ef4444; border: none; }
+
+    .main-container { max-width: 900px; margin: 1.5rem auto; padding: 0 1rem; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: white; }
+
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 500; }
+    input, select, textarea {
+      width: 100%;
+      background: #0f1623;
+      border: 1px solid var(--border);
+      color: white;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      outline: none;
     }
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #080811;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #232338;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #3c3c5e;
-    }
-    .gradient-border {
+    input:focus, select:focus { border-color: var(--primary); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .now-playing {
+      background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(6,182,212,0.2) 100%);
+      border: 1px solid var(--secondary);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
       position: relative;
-      background: #121225;
-      background-clip: padding-box;
-      border: 1px solid transparent;
-      border-radius: 1.25rem;
     }
-    .gradient-border::before {
-      content: '';
-      position: absolute;
-      top: -1px; right: -1px; bottom: -1px; left: -1px;
-      z-index: -1;
-      margin: -1px;
-      border-radius: inherit;
-      background: linear-gradient(135deg, #ff007f, #8a2be2, #00f3ff);
-      opacity: 0.4;
+    .now-playing-badge { background: var(--secondary); color: white; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 1rem; text-transform: uppercase; display: inline-block; margin-bottom: 0.5rem; }
+
+    .queue-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
     }
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printable-qr-area, #printable-qr-area * {
-        visibility: visible;
-      }
-      #printable-qr-area {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-      }
+    .queue-info h4 { font-size: 1rem; color: white; margin-bottom: 0.2rem; }
+    .queue-info p { font-size: 0.85rem; color: var(--text-muted); }
+    .queue-meta { font-size: 0.75rem; color: var(--accent); margin-top: 0.25rem; }
+
+    .tag { font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 0.25rem; background: #233148; color: var(--text-muted); }
+    .tag-key { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .badge-count { background: var(--primary); color: white; border-radius: 50%; padding: 0.1rem 0.5rem; font-size: 0.8rem; margin-left: 0.4rem; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
+    .modal-content { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.75rem; max-width: 450px; width: 100%; padding: 1.5rem; text-align: center; }
+
+    .timer { font-family: monospace; font-size: 2rem; color: var(--accent); margin: 0.5rem 0; font-weight: bold; }
+    .empty-state { text-align: center; color: var(--text-muted); padding: 2rem; font-size: 0.95rem; }
+
+    .status-pill { font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 1rem; font-weight: 600; }
+    .status-waiting { background: rgba(156, 163, 175, 0.2); color: var(--text-muted); }
+    .status-performing { background: rgba(16, 185, 129, 0.2); color: var(--success); }
   </style>
 </head>
-<body class="h-full flex flex-col bg-[#080811] text-slate-100 font-sans antialiased selection:bg-brand-pink selection:text-white">
+<body>
 
-  <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="p-2.5 bg-gradient-to-tr from-brand-pink to-brand-purple rounded-xl shadow-neon-pink flex items-center justify-center">
-          <i data-lucide="mic" class="w-6 h-6 text-white"></i>
-        </div>
+  <header>
+    <div class="nav-container">
+      <div class="logo">
+        🎤 StageMaster
+      </div>
+      <div>
+        <button id="viewToggleBtn" class="btn" onclick="toggleView()">
+          🛡️ Switch to Host View
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+
+    <!-- CURRENT PERFORMANCE (ALWAYS VISIBLE IF ACTIVE) -->
+    <div id="nowPlayingContainer" class="now-playing" style="display: none;">
+      <span class="now-playing-badge">🔥 Currently On Stage</span>
+      <h2 id="npSong" style="font-size: 1.5rem; color: white; margin-top: 0.2rem;">Song Title</h2>
+      <p id="npArtist" style="color: var(--text-muted); font-size: 1rem;">Artist Name</p>
+      <p id="npSinger" style="color: var(--accent); font-weight: 600; margin-top: 0.5rem;">Performer: <span id="npSingerName">Singer</span></p>
+      
+      <div class="timer" id="timerDisplay">00:00</div>
+
+      <div id="hostControls" style="display: none; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+        <button class="btn btn-sm btn-secondary" onclick="toggleTimer()">⏯️ Start/Pause Timer</button>
+        <button class="btn btn-sm btn-success" onclick="completeCurrent()">✅ Finish Performance</button>
+      </div>
+    </div>
+
+    <!-- GUEST VIEW -->
+    <div id="guestView">
+      <div class="card">
+        <div class="card-title">📝 Request a Song</div>
+        <form id="songRequestForm" onsubmit="submitRequest(event)">
+          <div class="form-group">
+            <label for="guestName">Your Name / Stage Name *</label>
+            <input type="text" id="guestName" required placeholder="e.g. Alex">
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="songTitle">Song Title *</label>
+              <input type="text" id="songTitle" required placeholder="e.g. Hotel California">
+            </div>
+            <div class="form-group">
+              <label for="artistName">Artist / Band *</label>
+              <input type="text" id="artistName" required placeholder="e.g. Eagles">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pitchShift">Key Adjustment (Optional)</label>
+            <select id="pitchShift">
+              <option value="Original Key">Original Key</option>
+              <option value="-2 Keys">Down 2 Keys (-2)</option>
+              <option value="-1 Key">Down 1 Key (-1)</option>
+              <option value="+1 Key">Up 1 Key (+1)</option>
+              <option value="+2 Keys">Up 2 Keys (+2)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="notes">Notes for Host / Shoutouts (Optional)</label>
+            <input type="text" id="notes" placeholder="e.g. It's my birthday!">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem;">
+            🎶 Send Song Request
+          </button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📜 Upcoming Queue <span id="guestQueueCount" class="badge-count">0</span></div>
+        <div id="guestQueueList"></div>
+      </div>
+    </div>
+
+    <!-- HOST VIEW -->
+    <div id="hostView" style="display: none;">
+      <div class="card" style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: space-between; align-items: center;">
         <div>
-          <h1 class="font-display text-xl sm:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-pink via-purple-400 to-brand-cyan tracking-wider">
-            STAGE MASTER
-          </h1>
-          <p class="text-[11px] text-slate-400 font-medium">Karaoke Event Host Manager</p>
+          <h3 style="color: white;">Host Dashboard</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Manage requests & live queue</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-sm" onclick="showQRModal()">📱 Display Venue QR</button>
+          <button class="btn btn-sm" onclick="exportCSV()">📥 Export List</button>
+          <button class="btn btn-sm btn-danger" onclick="clearAllData()">🗑️ Clear All</button>
         </div>
       </div>
 
-      <!-- Mode Toggle Switcher -->
-      <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800"
+      <div class="card">
+        <div class="card-title">📋 Live Requests Queue</div>
+        <div id="hostQueueList"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QR CODE MODAL -->
+  <div id="qrModal" class="modal">
+    <div class="modal-content">
+      <h3 style="color: white; margin-bottom: 0.5rem;">Venue QR Code</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Guests scan this code to make song requests on their phones</p>
+      
+      <div id="qrcode" style="background: white; padding: 1rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 1rem;"></div>
+
+      <div class="form-group" style="text-align: left;">
+        <label>Your Web Address (URL):</label>
+        <input type="text" id="qrUrlInput" placeholder="https://..." onchange="updateQR()">
+      </div>
+
+      <button class="btn btn-primary" onclick="closeQRModal()" style="width: 100%; justify-content: center;">Close</button>
+    </div>
+  </div>
+
+  <!-- Pure JS QR Code Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    // APP STATE
+    let queue = JSON.parse(localStorage.getItem('karaoke_queue') || '[]');
+    let currentView = 'guest'; // 'guest' or 'host'
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let qrGenerator = null;
+
+    // INITIALIZATION
+    window.onload = function() {
+      // Auto-detect current URL for QR code generator
+      const currentUrl = window.location.href;
+      document.getElementById('qrUrlInput').value = currentUrl;
+      
+      renderQueue();
+    };
+
+    function saveState() {
+      localStorage.setItem('karaoke_queue', JSON.stringify(queue));
+      renderQueue();
+    }
+
+    function toggleView() {
+      if (currentView === 'guest') {
+        const pin = prompt("Enter Host PIN (Default: 1234):");
+        if (pin === "1234" || pin === "") {
+          currentView = 'host';
+          document.getElementById('guestView').style.display = 'none';
+          document.getElementById('hostView').style.display = 'block';
+          document.getElementById('hostControls').style.display = 'flex';
+          document.getElementById('viewToggleBtn').innerText = '👤 Switch to Guest View';
+        } else {
+          alert("Incorrect PIN");
+        }
+      } else {
+        currentView = 'guest';
+        document.getElementById('guestView').style.display = 'block';
+        document.getElementById('hostView').style.display = 'none';
+        document.getElementById('hostControls').style.display = 'none';
+        document.getElementById('viewToggleBtn').innerText = '🛡️ Switch to Host View';
+      }
+    }
+
+    function submitRequest(e) {
+      e.preventDefault();
+      const name = document.getElementById('guestName').value.trim();
+      const song = document.getElementById('songTitle').value.trim();
+      const artist = document.getElementById('artistName').value.trim();
+      const pitch = document.getElementById('pitchShift').value;
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!name || !song || !artist) return;
+
+      const newRequest = {
+        id: Date.now(),
+        name: name,
+        song: song,
+        artist: artist,
+        pitch: pitch,
+        notes: notes,
+        status: 'waiting', // 'waiting', 'performing', 'completed'
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      queue.push(newRequest);
+      saveState();
+
+      // Reset form
+      document.getElementById('songRequestForm').reset();
+      alert("✅ Request sent! You are in the queue.");
+    }
+
+    function renderQueue() {
+      const guestList = document.getElementById('guestQueueList');
+      const hostList = document.getElementById('hostQueueList');
+      const activeItem = queue.find(item => item.status === 'performing');
+      const waitingItems = queue.filter(item => item.status === 'waiting');
+
+      // Update Now Playing Banner
+      const npContainer = document.getElementById('nowPlayingContainer');
+      if (activeItem) {
+        npContainer.style.display = 'block';
+        document.getElementById('npSong').innerText = activeItem.song;
+        document.getElementById('npArtist').innerText = activeItem.artist;
+        document.getElementById('npSingerName').innerText = activeItem.name;
+      } else {
+        npContainer.style.display = 'none';
+      }
+
+      document.getElementById('guestQueueCount').innerText = waitingItems.length;
+
+      // Render Guest List View
+      if (waitingItems.length === 0) {
+        guestList.innerHTML = `<div class="empty-state">No songs in the queue yet. Be the first to request!</div>`;
+      } else {
+        guestList.innerHTML = waitingItems.map((item, index) => `
+          <div class="queue-item">
+            <div class="queue-info">
+              <h4>#${index + 1}.${escapeHtml(item.song)}</h4>
+              <p>${escapeHtml(item.artist)} • Requested by <strong>${escapeHtml(item.name)}</strong></p>${item.pitch !== 'Original Key' ? `<span class="tag tag-key">${escapeHtml(item.pitch)}</span>` : ''}
+            </div>
+            <span class="status-pill status-waiting">Waiting</span>
+          </div>
+        `).join('');
+      }
+
+      // Render Host Dashboard List View
+      if (queue.length === 0) {
+        hostList.innerHTML = `<div class="empty-state">No request data found.</div>`;
+      } else {
+        hostList.innerHTML = queue.map((item, index) => `
+          <div class="queue-item" style="${item.status === 'completed' ? 'opacity: 0.5;' : ''}">
+            <div class="queue-info">
+              <h4>${escapeHtml(item.song)} - <span style="color:var(--text-muted);">${escapeHtml(item.artist)}</span></h4>
+              <p>Singer: <strong>${escapeHtml(item.name)}</strong>${item.notes ? `| Note: "${escapeHtml(item.notes)}"` : ''}</p>
+              <div class="queue-meta">
+                Key: ${escapeHtml(item.pitch)} • Time: ${item.timestamp}
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.3rem; align-items:flex-end;">
+              ${item.status === 'waiting' ? `
+                <button class="btn btn-sm btn-success" onclick="startPerformance(${item.id})">🎤 Send to Stage</button>
+              ` : ''}
+              ${item.status === 'performing' ? `
+                <span class="status-pill status-performing">On Stage</span>
+              ` : ''}
+              ${
